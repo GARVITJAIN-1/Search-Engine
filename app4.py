@@ -1,7 +1,7 @@
 import streamlit as st
 from langchain_groq import ChatGroq
 from langchain_community.tools import DuckDuckGoSearchRun
-from langchain.agents import initialize_agent, AgentType
+from langchain_classic.agents import initialize_agent, AgentType
 
 st.set_page_config(page_title="LangChain Search Chatbot")
 st.title("LangChain - Chat with Search")
