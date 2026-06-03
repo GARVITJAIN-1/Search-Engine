@@ -26,33 +26,27 @@ if prompt := st.chat_input("Ask something..."):
         st.error("Please enter Groq API key.")
         st.stop()
 
-    try:
-        llm = ChatGroq(
-            groq_api_key=api_key,
-            model_name="llama-3.3-70b-versatile",
-            temperature=0
-        )
+    llm = ChatGroq(
+        groq_api_key=api_key,
+        model_name="llama-3.3-70b-versatile",
+        temperature=0
+    )
 
-        search = DuckDuckGoSearchRun()
+    search = DuckDuckGoSearchRun()
+    tools = [search]
 
-        tools = [search]
+    agent = initialize_agent(
+        tools=tools,
+        llm=llm,
+        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+        verbose=True,
+        handle_parsing_errors=True
+    )
 
-        # ✅ WORKING AGENT (no tool-calling import needed)
-        agent = initialize_agent(
-            tools=tools,
-            llm=llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=True,
-            handle_parsing_errors=True
-        )
+    response = agent.run(prompt)
 
-        response = agent.run(prompt)
+    st.session_state.messages.append(
+        {"role": "assistant", "content": response}
+    )
 
-        st.session_state.messages.append(
-            {"role": "assistant", "content": response}
-        )
-
-        st.chat_message("assistant").write(response)
-
-    except Exception as e:
-        st.exception(e)
+    st.chat_message("assistant").write(response)
